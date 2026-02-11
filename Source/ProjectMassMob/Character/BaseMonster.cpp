@@ -70,19 +70,8 @@ void ABaseMonster::BeginPlay()
     AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), AMobPoolManager::StaticClass());
     PoolManager = Cast<AMobPoolManager>(FoundActor);
 
-    // 로그로 확인 (찾았는지 못 찾았는지)
-    if (PoolManager)
-    {
-        // 성공 로그 (필요하면 주석 해제)
-        // UE_LOG(LogTemp, Log, TEXT("Monster found PoolManager successfully."));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("CRITICAL: Monster CANNOT find PoolManager! Grid Logic will fail."));
-    }
 
-
-    // 시작하자마자 일단 숨김 (풀 대기 상태)
+    // 시작하자마자 일단 숨김
     Deactivate();
 }
 void ABaseMonster::SetLODLevel(int32 Level)
@@ -94,7 +83,7 @@ void ABaseMonster::SetLODLevel(int32 Level)
     USkeletalMeshComponent* MeshComp = GetMesh();
     UCharacterMovementComponent* MoveComp = GetCharacterMovement();
 
-    //걍 다 초기화해버려
+    //걍 다 초기화
     GetWorld()->GetTimerManager().ClearTimer(MoveTimerHandle);
     GetWorld()->GetTimerManager().ClearTimer(GridCheckTimerHandle);
 
@@ -181,15 +170,10 @@ void ABaseMonster::SetLODLevel(int32 Level)
             MeshComp->bPauseAnims = true;
         }
 
-        /*if (MyController)
-        {
-            MyController->StopMovement();
-        }*/
         MoveToPlayer();
 
         GetWorld()->GetTimerManager().SetTimer(MoveTimerHandle, this, &ABaseMonster::MoveToPlayer, (float)Interval_Far / 60.0f, true);
 
-        //DrawDebugSphere(GetWorld(), GetActorLocation() + FVector(0, 0, 100), 50.0f, 12, FColor::Red, false, -1.0f, 0, 2.0f);
 
         break;
     }
@@ -198,27 +182,18 @@ void ABaseMonster::Activate(FVector StartLocation)
 {
     SetActorLocation(StartLocation);
 
-    // 초기화 시엔 일단 켜둠 (매니저가 곧 LOD를 업데이트 할 것임)
+    // 초기화 시엔 일단 켜둠
     SetActorHiddenInGame(false);
     SetActorEnableCollision(true);
     GetCharacterMovement()->SetComponentTickEnabled(true);
     GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-    // 강제 LOD 리셋 (그래야 SetLODLevel이 동작함)
+    // 강제 LOD 리셋
     CurrentLODLevel = -1;
 
     LastGridLocation = StartLocation;
 
-    // 매니저 등록
-    if (PoolManager)
-    {
-        PoolManager->UpdateMobGrid(this, FVector(999999, 999999, 999999));
-    }
+    MoveToPlayer(); // 즉시이동
 
-    MoveToPlayer(); // 즉시 1회 이동
-
-    // [중요] 여기서 타이머를 켜지 마세요.
-    // 매니저가 UpdateMobLOD를 호출하면서 SetLODLevel에 의해 적절한 타이머가 켜집니다.
-    // 만약 매니저 업데이트 전에 움직이고 싶다면 기본값(Visible)으로 설정:
     SetLODLevel(0);
 }
 
@@ -243,8 +218,6 @@ void ABaseMonster::MoveToPlayer()
 
     if (MyController && TargetPlayer)
     {
-        // MoveToActor: 내비게이션을 사용하여 타겟 액터를 따라감
-        // AcceptanceRadius: 100.0f (너무 딱 붙지 않게)
         MyController->MoveToActor(TargetPlayer, 5.0f);
     }
 }

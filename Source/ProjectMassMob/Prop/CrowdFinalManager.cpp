@@ -11,16 +11,14 @@
 
 DECLARE_STATS_GROUP(TEXT("Crowd Manager Debug"), STATGROUP_CrowdDebug, STATCAT_Advanced);
 
-// [세부 카운터 정의]
-// 1. 전체 루프 횟수
+// 전체 루프 횟수
 DECLARE_DWORD_COUNTER_STAT(TEXT("Total Units Checked"), STAT_Crowd_Total, STATGROUP_CrowdDebug);
-// 2. 도착해서 스킵된 횟수 (Idle)
-DECLARE_DWORD_COUNTER_STAT(TEXT("Skipped : Arrived (Idle)"), STAT_Crowd_Skip_Arrived, STATGROUP_CrowdDebug);
-// 3. LOD 2라서 스킵된 횟수 (Hidden)
+
+// LOD 2라서 스킵된 횟수
 DECLARE_DWORD_COUNTER_STAT(TEXT("Skipped : LOD 2 (Hidden)"), STAT_Crowd_Skip_LOD2, STATGROUP_CrowdDebug);
-// 4. 스로틀링(내 차례 아님)으로 스킵된 횟수
+// 스로틀링(내 차례 아님)으로 스킵된 횟수
 DECLARE_DWORD_COUNTER_STAT(TEXT("Skipped : Throttling"), STAT_Crowd_Skip_Throttle, STATGROUP_CrowdDebug);
-// 5. 실제로 UpdateTransform이 불린 횟수 (Real Update)
+// 실제로 UpdateTransform이 불린 횟수 
 DECLARE_DWORD_COUNTER_STAT(TEXT("Executed : Update Transform"), STAT_Crowd_RealUpdate, STATGROUP_CrowdDebug);
 
 
@@ -126,7 +124,7 @@ void ACrowdFinalManager::Tick(float DeltaTime)
 
 			if (DistSq > DistCheck_Low)
 			{
-				// 너무 멀면 화면 검사 생략 -> 무조건 LOD 2
+				// 너무 멀면 화면 검사 생략
 				Data.DesiredLOD = 2;
 			}
 			else
@@ -135,9 +133,9 @@ void ACrowdFinalManager::Tick(float DeltaTime)
 				if (bCanCalcLOD)
 				{
 					if (DistSq < DistCheck_High && IsInViewportAsync(Data.Location, ViewProjMatrix, LODMargin_High))
-						Data.DesiredLOD = 0; // 가까움 + 화면 중앙
+						Data.DesiredLOD = 0; // 가까움 
 					else if (IsInViewportAsync(Data.Location, ViewProjMatrix, LODMargin_Low))
-						Data.DesiredLOD = 1; // 중간 + 화면 주변
+						Data.DesiredLOD = 1; // 중간
 					else
 						Data.DesiredLOD = 2; // 화면 밖
 				}
@@ -147,9 +145,10 @@ void ACrowdFinalManager::Tick(float DeltaTime)
 				}
 			}
 
-			int32 UpdateInterval = Interval_High; // 기본 1
-			if (Data.DesiredLOD == 1) UpdateInterval = Interval_Low; // LOD 1이면 10프레임
-			else if (Data.DesiredLOD == 2) UpdateInterval = Interval_Far; // [중요] LOD 2면 30프레임(Interval_Far)마다 이동
+			//Interval 설정
+			int32 UpdateInterval = Interval_High; 
+			if (Data.DesiredLOD == 1) UpdateInterval = Interval_Low;
+			else if (Data.DesiredLOD == 2) UpdateInterval = Interval_Far; 
 
 			// 내 차례인지 확인
 			if ((Index + FrameCount) % UpdateInterval == 0)
@@ -162,14 +161,14 @@ void ACrowdFinalManager::Tick(float DeltaTime)
 				FVector NormDir = Dir.GetSafeNormal2D();
 				if (!NormDir.IsNearlyZero())
 				{
-					// 데이터상의 위치를 이동시킴 (액터 위치는 나중에 동기화)
+					// 데이터상의 위치를 이동시킴
 					Data.Location += NormDir * Data.MoveSpeed * ActualDeltaTime;
 					Data.Direction = NormDir;
 				}
 			}
 		});
 
-	// Main Thread 적용
+	// Main Thread 
 	for (int32 i = 0; i < Count; ++i)
 	{
 		const FCrowdUnitData& Data = UnitDataArray[i];

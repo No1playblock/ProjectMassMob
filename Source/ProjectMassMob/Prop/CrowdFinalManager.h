@@ -37,17 +37,19 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	
-	// 여기서 모든 계산(이동+LOD)을 수행
+	// 여기서 이동과 LOD 수행
 	virtual void Tick(float DeltaTime) override;
 
+
+	//Tick Interval 설
 	UPROPERTY(EditAnywhere, Category = "Settings")
-	int32 Interval_High = 1; // 가까운 유닛은 매 프레임 이동
+	int32 Interval_High = 1; 
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
-	int32 Interval_Low = 10;  // 중간 유닛은 3프레임에 한 번 이동
+	int32 Interval_Low = 10; 
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
-	int32 Interval_Far = 30;  // 먼 유닛은 5프레임에 한 번 이동
+	int32 Interval_Far = 30;  
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 	TSubclassOf<class ACrowdUnit> UnitClass;
@@ -58,7 +60,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Settings")
 	float DefaultMoveSpeed = 300.0f;
 
-	// LOD 거리 비율 (화면 크기 대비 마진)
+	// LOD 거리 비율
 	UPROPERTY(EditAnywhere, Category = "Settings")
 	float LODMargin_High = 0.1f;
 

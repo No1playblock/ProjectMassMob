@@ -15,10 +15,9 @@ void ACrowdSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 오케스트레이터 찾기
+	// 매니저 찾기
 	if (!Manager)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CrowdSpawner: Finding CrowdFinalManager in the world."));
 		AActor* Found = UGameplayStatics::GetActorOfClass(GetWorld(), ACrowdFinalManager::StaticClass());
 		Manager = Cast<ACrowdFinalManager>(Found);
 	}
@@ -26,7 +25,6 @@ void ACrowdSpawner::BeginPlay()
 	// 대량 소환
 	if (Manager && InitialCount > 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("--- Crowd Spawning Started: %d ---"), InitialCount);
 
 		Manager->InitializePool();
 		for (int32 i = 0; i < InitialCount; ++i)
@@ -37,7 +35,6 @@ void ACrowdSpawner::BeginPlay()
 				Manager->SpawnUnit(Pos);
 			}
 		}
-		UE_LOG(LogTemp, Warning, TEXT("--- Crowd Spawning Finished ---"));
 	}
 }
 

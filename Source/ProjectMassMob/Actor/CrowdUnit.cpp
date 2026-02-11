@@ -7,7 +7,7 @@
 
 ACrowdUnit::ACrowdUnit()
 {
-	// 1. 액터 틱 완전 제거
+	// 액터 틱 제거
 	PrimaryActorTick.bCanEverTick = false;
 
 
@@ -31,7 +31,7 @@ ACrowdUnit::ACrowdUnit()
 	MeshComp->SetGenerateOverlapEvents(false);
 
 	// 렌더링 최적화
-	MeshComp->SetCastShadow(false); // 그림자 끄기 (성능 향상 큼)
+	MeshComp->SetCastShadow(false); // 그림자 끄기
 	MeshComp->bEnableUpdateRateOptimizations = true; // URO 활성화
 	MeshComp->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 	MeshComp->bComponentUseFixedSkelBounds = true;
@@ -42,7 +42,7 @@ ACrowdUnit::ACrowdUnit()
 
 void ACrowdUnit::UpdateTransform(const FVector& NewLocation, const FRotator& NewRotation)
 {
-	// 물리 연산 없이 좌표만 강제 이동 (Teleport)
+	// 물리 연산 없이 좌표만 강제 이동
 	SetActorLocationAndRotation(NewLocation, NewRotation, false, nullptr, ETeleportType::TeleportPhysics);
 }
 
@@ -67,7 +67,7 @@ void ACrowdUnit::SetLODLevel(int32 Level)
 		SetActorHiddenInGame(false);
 		if (MeshComp)
 		{
-			// 화면에 보일 때만 갱신 + 프레임 스킵 허용
+			// 화면에 보일 때만 갱신
 			MeshComp->VisibilityBasedAnimTickOption 
 				= EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 			MeshComp->bEnableUpdateRateOptimizations = true;
@@ -96,7 +96,6 @@ void ACrowdUnit::SetActive(bool bActive)
 	{
 		SetActorHiddenInGame(true);
 		SetActorEnableCollision(false);
-		//CurrentLOD = 2;
 	}
 }
 

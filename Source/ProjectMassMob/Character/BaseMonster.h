@@ -30,26 +30,25 @@ public:
     // 몹 고유 인덱스 (매니저 관리용)
     int32 PoolIndex;
 
-    // LOD 레벨 설정 (0: High, 1: Low, 2: Sleep)
+    // LOD 레벨 설정
     void SetLODLevel(int32 Level);
 
 protected:
     virtual void BeginPlay() override;
 
+
+    //유닛별 Tick Interval
     UPROPERTY(EditAnywhere, Category = "Settings")
-    int32 Interval_High = 1; // 가까운 유닛은 매 프레임 이동
+    int32 Interval_High = 1; 
 
     UPROPERTY(EditAnywhere, Category = "Settings")
-    int32 Interval_Low = 10;  // 중간 유닛은 3프레임에 한 번 이동
+    int32 Interval_Low = 10;  
 
     UPROPERTY(EditAnywhere, Category = "Settings")
-    int32 Interval_Far = 30;  // 먼 유닛은 5프레임에 한 번 이동
+    int32 Interval_Far = 30;  
 
-    //void Tick(float DeltaTime);
-
-    void CheckGridLocation();
 private:
-    // AI 컨트롤러 캐싱 (매번 GetController 방지)
+    // AI 컨트롤러 캐싱
     UPROPERTY()
     class AAIController* MyController;
 
@@ -60,7 +59,7 @@ private:
     // 이전 프레임 위치 저장용
     FVector LastGridLocation;
 
-    // 매니저 포인터 캐싱 (BeginPlay에서 설정 필요)
+    // 매니저 포인터 캐싱
     UPROPERTY()
     TObjectPtr<class AMobPoolManager> PoolManager;
 
